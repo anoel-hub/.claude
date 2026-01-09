@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Helper - Guide Interactif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(103, 126, 234, 0.1);
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .command-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .command-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .command-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .command-code {
+            background: #2d3748;
+            color: #f7fafc;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .command-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .workflow-visual {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .workflow-step {
+            display: inline-block;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .workflow-step:after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .workflow-step:last-child:after {
+            content: '';
+        }
+
+        .generator-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(103, 126, 234, 0.4);
+        }
+
+        .result-box {
+            background: #2d3748;
+            color: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .troubleshoot-item {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .troubleshoot-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .solution {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+
+        .tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .tip-title {
+            font-weight: 700;
+            color: #0c5460;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1 1 auto;
+            }
+
+            .workflow-step {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .workflow-step:after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -25px;
+                transform: translateX(50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Git Helper</h1>
+            <p>Votre assistant quotidien pour maîtriser Git</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('commands')">Commandes</button>
+            <button class="tab" onclick="showTab('workflow')">Workflow</button>
+            <button class="tab" onclick="showTab('generator')">Générateur</button>
+            <button class="tab" onclick="showTab('troubleshoot')">Dépannage</button>
+            <button class="tab" onclick="showTab('tips')">Astuces</button>
+        </div>
+
+        <div class="content">
+            <!-- Tab: Commandes -->
+            <div id="commands" class="tab-content active">
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Rechercher une commande..." onkeyup="searchCommands()">
+
+                <div id="commandsList">
+                    <div class="category">
+                        <h2 class="category-title">🎯 Commandes de Base</h2>
+
+                        <div class="command-card" data-keywords="init initialiser nouveau repo repository">
+                            <div class="command-title">Initialiser un nouveau dépôt</div>
+                            <div class="command-code">git init</div>
+                            <div class="command-desc">Crée un nouveau dépôt Git dans le répertoire courant.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="clone cloner copier repo repository">
+                            <div class="command-title">Cloner un dépôt</div>
+                            <div class="command-code">git clone &lt;url&gt;</div>
+                            <div class="command-desc">Crée une copie locale d'un dépôt distant.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="status état statut changes modifications">
+                            <div class="command-title">Vérifier l'état</div>
+                            <div class="command-code">git status</div>
+                            <div class="command-desc">Affiche l'état du répertoire de travail et de la zone de staging.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="add ajouter stage staging">
+                            <div class="command-title">Ajouter des fichiers</div>
+                            <div class="command-code">git add &lt;fichier&gt;<br>git add .<br>git add -A</div>
+                            <div class="command-desc">Ajoute des fichiers à la zone de staging. "." ajoute tous les fichiers modifiés, "-A" ajoute tout.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="commit valider enregistrer message">
+                            <div class="command-title">Créer un commit</div>
+                            <div class="command-code">git commit -m "message"<br>git commit -am "message"</div>
+                            <div class="command-desc">Enregistre les modifications. L'option "-a" ajoute et commit automatiquement les fichiers modifiés.</div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <h2 class="category-title">🌿 Branches</h2>
+
+                        <div class="command-card" data-keywords="branch branche créer nouvelle new">
+                            <div class="command-title">Créer une branche</div>
+                            <div class="command-code">git branch &lt;nom-branche&gt;<br>git checkout -b &lt;nom-branche&gt;</div>
+                            <div class="command-desc">La première commande crée seulement, la seconde crée et bascule dessus.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="checkout switch basculer changer branche">
+                            <div class="command-title">Changer de branche</div>
+                            <div class="command-code">git checkout &lt;nom-branche&gt;<br>git switch &lt;nom-branche&gt;</div>
+                            <div class="command-desc">Bascule vers une autre branche existante.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="branch liste list branches">
+                            <div class="command-title">Lister les branches</div>
+                            <div class="command-code">git branch<br>git branch -a</div>
+                            <div class="command-desc">Affiche les branches locales. L'option "-a" affiche aussi les branches distantes.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="merge fusionner combiner branches">
+                            <div class="command-title">Fusionner une branche</div>
+                            <div class="command-code">git merge &lt;nom-branche&gt;</div>
+                            <div class="command-desc">Fusionne la branche spécifiée dans la branche courante.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="branch delete supprimer effacer branche">
+                            <div class="command-title">Supprimer une branche</div>
+                            <div class="command-code">git branch -d &lt;nom-branche&gt;<br>git branch -D &lt;nom-branche&gt;</div>
+                            <div class="command-desc">"-d" supprime si fusionnée, "-D" force la suppression.</div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <h2 class="category-title">🔄 Synchronisation</h2>
+
+                        <div class="command-card" data-keywords="pull récupérer télécharger sync synchroniser">
+                            <div class="command-title">Récupérer et fusionner</div>
+                            <div class="command-code">git pull<br>git pull origin &lt;branche&gt;</div>
+                            <div class="command-desc">Télécharge et fusionne les modifications depuis le dépôt distant.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="push envoyer pousser upload publier">
+                            <div class="command-title">Pousser les modifications</div>
+                            <div class="command-code">git push<br>git push origin &lt;branche&gt;<br>git push -u origin &lt;branche&gt;</div>
+                            <div class="command-desc">Envoie les commits vers le dépôt distant. "-u" définit la branche distante par défaut.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="fetch récupérer télécharger">
+                            <div class="command-title">Récupérer sans fusionner</div>
+                            <div class="command-code">git fetch<br>git fetch origin</div>
+                            <div class="command-desc">Télécharge les modifications sans les fusionner automatiquement.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="remote distant repository repo url">
+                            <div class="command-title">Gérer les dépôts distants</div>
+                            <div class="command-code">git remote -v<br>git remote add origin &lt;url&gt;</div>
+                            <div class="command-desc">Affiche ou ajoute des dépôts distants.</div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <h2 class="category-title">📜 Historique</h2>
+
+                        <div class="command-card" data-keywords="log historique history commits">
+                            <div class="command-title">Voir l'historique</div>
+                            <div class="command-code">git log<br>git log --oneline<br>git log --graph --oneline --all</div>
+                            <div class="command-desc">Affiche l'historique des commits. Les options rendent l'affichage plus compact et graphique.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="diff différence changes modifications">
+                            <div class="command-title">Voir les différences</div>
+                            <div class="command-code">git diff<br>git diff --staged<br>git diff &lt;branche1&gt; &lt;branche2&gt;</div>
+                            <div class="command-desc">Montre les différences entre versions, fichiers ou branches.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="show afficher commit détails">
+                            <div class="command-title">Détails d'un commit</div>
+                            <div class="command-code">git show &lt;commit-hash&gt;</div>
+                            <div class="command-desc">Affiche les détails et modifications d'un commit spécifique.</div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <h2 class="category-title">↩️ Annulation</h2>
+
+                        <div class="command-card" data-keywords="reset annuler undo revenir retour">
+                            <div class="command-title">Annuler des modifications</div>
+                            <div class="command-code">git reset &lt;fichier&gt;<br>git reset --soft HEAD~1<br>git reset --hard HEAD~1</div>
+                            <div class="command-desc">Retire du staging, annule le dernier commit (soft garde les modifs, hard les supprime).</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="checkout restore restaurer fichier annuler">
+                            <div class="command-title">Restaurer un fichier</div>
+                            <div class="command-code">git checkout -- &lt;fichier&gt;<br>git restore &lt;fichier&gt;</div>
+                            <div class="command-desc">Annule les modifications non commitées d'un fichier.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="revert annuler commit public">
+                            <div class="command-title">Annuler un commit public</div>
+                            <div class="command-code">git revert &lt;commit-hash&gt;</div>
+                            <div class="command-desc">Crée un nouveau commit qui annule les modifications d'un commit précédent.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="stash sauvegarder temporaire cache">
+                            <div class="command-title">Sauvegarder temporairement</div>
+                            <div class="command-code">git stash<br>git stash pop<br>git stash list</div>
+                            <div class="command-desc">Met de côté les modifications en cours. "pop" les restaure, "list" les affiche.</div>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <h2 class="category-title">🛠️ Avancé</h2>
+
+                        <div class="command-card" data-keywords="rebase rebaser réécrire historique">
+                            <div class="command-title">Rebaser une branche</div>
+                            <div class="command-code">git rebase &lt;branche&gt;<br>git rebase -i HEAD~3</div>
+                            <div class="command-desc">Réapplique les commits. "-i" permet de réorganiser/modifier l'historique interactivement.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="cherry-pick sélectionner commit copier">
+                            <div class="command-title">Appliquer un commit spécifique</div>
+                            <div class="command-code">git cherry-pick &lt;commit-hash&gt;</div>
+                            <div class="command-desc">Applique les modifications d'un commit spécifique sur la branche courante.</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="tag étiquette version release">
+                            <div class="command-title">Créer un tag</div>
+                            <div class="command-code">git tag &lt;nom-tag&gt;<br>git tag -a v1.0.0 -m "Version 1.0.0"</div>
+                            <div class="command-desc">Crée une référence nommée pour un commit (souvent pour les versions).</div>
+                        </div>
+
+                        <div class="command-card" data-keywords="clean nettoyer supprimer fichiers non suivis">
+                            <div class="command-title">Nettoyer les fichiers non suivis</div>
+                            <div class="command-code">git clean -n<br>git clean -fd</div>
+                            <div class="command-desc">"-n" simule, "-fd" supprime vraiment les fichiers et dossiers non suivis.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Workflow -->
+            <div id="workflow" class="tab-content">
+                <h2 class="category-title">📊 Workflows Git Courants</h2>
+
+                <div class="category">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Workflow Basique</h3>
+                    <div class="workflow-visual">
+                        <div class="workflow-step">Modifier fichiers</div>
+                        <div class="workflow-step">git add .</div>
+                        <div class="workflow-step">git commit -m "..."</div>
+                        <div class="workflow-step">git push</div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Workflow avec Nouvelle Branche</h3>
+                    <div class="workflow-visual">
+                        <div class="workflow-step">git checkout -b feature</div>
+                        <div class="workflow-step">Développer</div>
+                        <div class="workflow-step">git add & commit</div>
+                        <div class="workflow-step">git push -u origin feature</div>
+                        <div class="workflow-step">Pull Request</div>
+                        <div class="workflow-step">Merge</div>
+                    </div>
+                </div>
+
+                <div class="category">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Workflow de Synchronisation</h3>
+                    <div class="workflow-visual">
+                        <div class="workflow-step">git fetch origin</div>
+                        <div class="workflow-step">git checkout main</div>
+                        <div class="workflow-step">git pull</div>
+                        <div class="workflow-step">git checkout feature</div>
+                        <div class="workflow-step">git merge main</div>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">💡 Bonne Pratique</div>
+                    Faites des commits atomiques : un commit = une fonctionnalité ou correction. Écrivez des messages de commit clairs et descriptifs.
+                </div>
+
+                <div class="category">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Git Flow (Branches)</h3>
+                    <div class="command-desc" style="line-height: 1.8; padding: 15px;">
+                        <strong>main/master</strong> : Branche de production stable<br>
+                        <strong>develop</strong> : Branche de développement<br>
+                        <strong>feature/xxx</strong> : Nouvelles fonctionnalités<br>
+                        <strong>hotfix/xxx</strong> : Corrections urgentes<br>
+                        <strong>release/xxx</strong> : Préparation de versions
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Générateur -->
+            <div id="generator" class="tab-content">
+                <h2 class="category-title">⚡ Générateur de Commandes Git</h2>
+
+                <div class="generator-form">
+                    <div class="form-group">
+                        <label>Type d'opération :</label>
+                        <select id="operationType" onchange="updateGeneratorForm()">
+                            <option value="">-- Choisir --</option>
+                            <option value="commit">Créer un commit</option>
+                            <option value="branch">Gérer une branche</option>
+                            <option value="merge">Fusionner des branches</option>
+                            <option value="remote">Opération distante</option>
+                            <option value="undo">Annuler des modifications</option>
+                            <option value="stash">Stash temporaire</option>
+                        </select>
+                    </div>
+
+                    <div id="dynamicFields"></div>
+
+                    <button class="btn" onclick="generateCommand()">Générer la commande</button>
+                </div>
+
+                <div id="generatedCommand" class="result-box"></div>
+            </div>
+
+            <!-- Tab: Dépannage -->
+            <div id="troubleshoot" class="tab-content">
+                <h2 class="category-title">🔧 Dépannage : Problèmes Courants</h2>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ J'ai commit sur la mauvaise branche</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git log</code> (noter le hash du commit)<br>
+                        <code>git reset --soft HEAD~1</code> (annule le commit, garde les modifs)<br>
+                        <code>git checkout bonne-branche</code><br>
+                        <code>git commit -m "message"</code>
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ Conflit de merge</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        1. Ouvrir les fichiers en conflit (marqués par Git)<br>
+                        2. Résoudre les sections entre &lt;&lt;&lt;&lt;&lt;&lt;&lt; et &gt;&gt;&gt;&gt;&gt;&gt;&gt;<br>
+                        3. <code>git add &lt;fichiers-résolus&gt;</code><br>
+                        4. <code>git commit</code> (pour finaliser le merge)
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ J'ai besoin de changer de branche mais j'ai des modifications</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git stash</code> (sauvegarder temporairement)<br>
+                        <code>git checkout autre-branche</code><br>
+                        Puis revenir : <code>git checkout branche-originale</code><br>
+                        <code>git stash pop</code> (restaurer les modifs)
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ J'ai oublié d'ajouter des fichiers au dernier commit</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git add &lt;fichiers-oubliés&gt;</code><br>
+                        <code>git commit --amend --no-edit</code><br>
+                        (--no-edit garde le même message)
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ Mon dépôt local est désynchronisé avec le distant</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git fetch origin</code><br>
+                        <code>git status</code> (voir l'état)<br>
+                        <code>git pull --rebase origin main</code> (recommandé)<br>
+                        ou <code>git pull origin main</code> (crée un merge commit)
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ J'ai fait un git reset --hard par erreur</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git reflog</code> (trouver le commit perdu)<br>
+                        <code>git reset --hard &lt;hash-commit&gt;</code><br>
+                        Le reflog garde tout pendant 30 jours !
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ J'ai push un commit sensible (mots de passe, clés API)</div>
+                    <div class="solution">
+                        <strong>⚠️ URGENT :</strong><br>
+                        1. Changer IMMÉDIATEMENT les credentials compromises<br>
+                        2. Pour nettoyer l'historique (complexe) :<br>
+                        <code>git filter-branch</code> ou utiliser <strong>BFG Repo-Cleaner</strong><br>
+                        3. Force push : <code>git push --force</code><br>
+                        ⚠️ Prévenir l'équipe avant un force push !
+                    </div>
+                </div>
+
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-title">❌ Erreur "fatal: refusing to merge unrelated histories"</div>
+                    <div class="solution">
+                        <strong>Solution :</strong><br>
+                        <code>git pull origin main --allow-unrelated-histories</code><br>
+                        Puis résoudre les conflits si nécessaire
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Astuces -->
+            <div id="tips" class="tab-content">
+                <h2 class="category-title">💎 Astuces et Bonnes Pratiques</h2>
+
+                <div class="tip">
+                    <div class="tip-title">🎯 Messages de Commit</div>
+                    <strong>Format recommandé :</strong><br>
+                    • Type: Action claire (ex: "fix: correction du bug de login")<br>
+                    • Types courants: feat, fix, docs, style, refactor, test, chore<br>
+                    • Utiliser l'impératif présent: "add" et non "added"<br>
+                    • Première ligne : max 50 caractères<br>
+                    • Description détaillée après une ligne vide si nécessaire
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">⚡ Alias Git Utiles</div>
+                    <strong>Ajoutez dans ~/.gitconfig :</strong><br>
+                    <div class="command-code" style="margin-top: 10px;">
+[alias]<br>
+&nbsp;&nbsp;st = status<br>
+&nbsp;&nbsp;co = checkout<br>
+&nbsp;&nbsp;br = branch<br>
+&nbsp;&nbsp;ci = commit<br>
+&nbsp;&nbsp;unstage = reset HEAD --<br>
+&nbsp;&nbsp;last = log -1 HEAD<br>
+&nbsp;&nbsp;visual = log --graph --oneline --all
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">🔒 Fichier .gitignore</div>
+                    <strong>Patterns utiles :</strong><br>
+                    <div class="command-code" style="margin-top: 10px;">
+# Dépendances<br>
+node_modules/<br>
+vendor/<br>
+<br>
+# Environnement<br>
+.env<br>
+.env.local<br>
+<br>
+# Build<br>
+dist/<br>
+build/<br>
+*.log<br>
+<br>
+# IDE<br>
+.vscode/<br>
+.idea/<br>
+*.swp
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">🚀 Optimisation</div>
+                    <strong>Améliorer les performances :</strong><br>
+                    • <code>git gc</code> : Nettoie et optimise le dépôt<br>
+                    • <code>git fetch --prune</code> : Nettoie les refs distantes obsolètes<br>
+                    • <code>git config --global core.preloadindex true</code> : Accélère les opérations<br>
+                    • <code>git config --global core.fscache true</code> : Cache du système de fichiers
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">🔍 Recherche Avancée</div>
+                    <strong>Trouver des informations :</strong><br>
+                    • <code>git grep "texte"</code> : Cherche dans tous les fichiers suivis<br>
+                    • <code>git log -S "fonction"</code> : Trouve quand une fonction a été ajoutée/supprimée<br>
+                    • <code>git log --author="nom"</code> : Commits d'un auteur<br>
+                    • <code>git blame fichier</code> : Qui a modifié chaque ligne
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">🛡️ Sécurité</div>
+                    <strong>Protéger votre code :</strong><br>
+                    • Ne jamais commiter de secrets (API keys, passwords, tokens)<br>
+                    • Utiliser .gitignore pour les fichiers sensibles<br>
+                    • Activer la signature des commits : <code>git config --global commit.gpgsign true</code><br>
+                    • Vérifier avant un push : <code>git diff origin/main</code>
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">📝 Pull Requests</div>
+                    <strong>Bonnes pratiques :</strong><br>
+                    • Garder les PRs petites et focalisées<br>
+                    • Écrire une description claire du changement<br>
+                    • Lier les issues/tickets concernés<br>
+                    • Ajouter des captures d'écran si changements UI<br>
+                    • Répondre aux commentaires de review rapidement
+                </div>
+
+                <div class="tip">
+                    <div class="tip-title">🔄 Synchronisation d'équipe</div>
+                    <strong>Travailler en équipe :</strong><br>
+                    • Faire un <code>git pull</code> avant de commencer à travailler<br>
+                    • Communiquer avant un force push<br>
+                    • Utiliser des branches pour les features<br>
+                    • Faire des commits réguliers<br>
+                    • Review le code des collègues
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Search commands
+        function searchCommands() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const commands = document.querySelectorAll('.command-card');
+
+            commands.forEach(command => {
+                const title = command.querySelector('.command-title').textContent.toLowerCase();
+                const code = command.querySelector('.command-code').textContent.toLowerCase();
+                const desc = command.querySelector('.command-desc').textContent.toLowerCase();
+                const keywords = command.getAttribute('data-keywords') || '';
+
+                const searchableText = title + ' ' + code + ' ' + desc + ' ' + keywords;
+
+                if (searchableText.includes(searchTerm)) {
+                    command.style.display = 'block';
+                } else {
+                    command.style.display = 'none';
+                }
+            });
+        }
+
+        // Command generator
+        function updateGeneratorForm() {
+            const type = document.getElementById('operationType').value;
+            const dynamicFields = document.getElementById('dynamicFields');
+
+            let html = '';
+
+            switch(type) {
+                case 'commit':
+                    html = `
+                        <div class="form-group">
+                            <label>Message du commit :</label>
+                            <textarea id="commitMessage" placeholder="feat: ajout de la nouvelle fonctionnalité"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="commitAll"> Commiter tous les fichiers modifiés (git add -A)
+                            </label>
+                        </div>
+                    `;
+                    break;
+                case 'branch':
+                    html = `
+                        <div class="form-group">
+                            <label>Action :</label>
+                            <select id="branchAction">
+                                <option value="create">Créer une nouvelle branche</option>
+                                <option value="switch">Changer de branche</option>
+                                <option value="delete">Supprimer une branche</option>
+                                <option value="list">Lister les branches</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nom de la branche :</label>
+                            <input type="text" id="branchName" placeholder="feature/nouvelle-fonctionnalite">
+                        </div>
+                    `;
+                    break;
+                case 'merge':
+                    html = `
+                        <div class="form-group">
+                            <label>Branche source (à fusionner) :</label>
+                            <input type="text" id="sourceBranch" placeholder="feature/ma-branche">
+                        </div>
+                        <div class="form-group">
+                            <label>Branche de destination (courante) :</label>
+                            <input type="text" id="destBranch" placeholder="main">
+                        </div>
+                    `;
+                    break;
+                case 'remote':
+                    html = `
+                        <div class="form-group">
+                            <label>Action :</label>
+                            <select id="remoteAction">
+                                <option value="push">Push vers le distant</option>
+                                <option value="pull">Pull depuis le distant</option>
+                                <option value="fetch">Fetch (récupérer sans fusionner)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Branche :</label>
+                            <input type="text" id="remoteBranch" placeholder="main">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="setUpstream"> Définir comme branche de suivi (-u)
+                            </label>
+                        </div>
+                    `;
+                    break;
+                case 'undo':
+                    html = `
+                        <div class="form-group">
+                            <label>Que voulez-vous annuler ?</label>
+                            <select id="undoAction">
+                                <option value="unstage">Retirer du staging (git reset)</option>
+                                <option value="uncommit">Annuler le dernier commit (garder modifs)</option>
+                                <option value="discard">Annuler modifs fichier (git restore)</option>
+                                <option value="hard-reset">Tout annuler (DANGER)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fichier (optionnel) :</label>
+                            <input type="text" id="undoFile" placeholder="fichier.js">
+                        </div>
+                    `;
+                    break;
+                case 'stash':
+                    html = `
+                        <div class="form-group">
+                            <label>Action :</label>
+                            <select id="stashAction">
+                                <option value="save">Sauvegarder les modifications</option>
+                                <option value="pop">Restaurer et supprimer</option>
+                                <option value="list">Lister les stash</option>
+                                <option value="apply">Appliquer sans supprimer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message (optionnel) :</label>
+                            <input type="text" id="stashMessage" placeholder="WIP: travail en cours">
+                        </div>
+                    `;
+                    break;
+            }
+
+            dynamicFields.innerHTML = html;
+        }
+
+        function generateCommand() {
+            const type = document.getElementById('operationType').value;
+            const resultBox = document.getElementById('generatedCommand');
+            let command = '';
+
+            if (!type) {
+                alert('Veuillez choisir un type d\'opération');
+                return;
+            }
+
+            switch(type) {
+                case 'commit':
+                    const message = document.getElementById('commitMessage').value;
+                    const addAll = document.getElementById('commitAll').checked;
+                    if (!message) {
+                        alert('Veuillez entrer un message de commit');
+                        return;
+                    }
+                    if (addAll) {
+                        command = `git add -A\ngit commit -m "${message}"`;
+                    } else {
+                        command = `git add <fichiers>\ngit commit -m "${message}"`;
+                    }
+                    break;
+
+                case 'branch':
+                    const action = document.getElementById('branchAction').value;
+                    const branchName = document.getElementById('branchName').value;
+
+                    switch(action) {
+                        case 'create':
+                            if (!branchName) {
+                                alert('Veuillez entrer un nom de branche');
+                                return;
+                            }
+                            command = `git checkout -b ${branchName}`;
+                            break;
+                        case 'switch':
+                            if (!branchName) {
+                                alert('Veuillez entrer un nom de branche');
+                                return;
+                            }
+                            command = `git checkout ${branchName}`;
+                            break;
+                        case 'delete':
+                            if (!branchName) {
+                                alert('Veuillez entrer un nom de branche');
+                                return;
+                            }
+                            command = `git branch -d ${branchName}`;
+                            break;
+                        case 'list':
+                            command = 'git branch -a';
+                            break;
+                    }
+                    break;
+
+                case 'merge':
+                    const sourceBranch = document.getElementById('sourceBranch').value;
+                    const destBranch = document.getElementById('destBranch').value;
+                    if (!sourceBranch || !destBranch) {
+                        alert('Veuillez entrer les noms des branches');
+                        return;
+                    }
+                    command = `git checkout ${destBranch}\ngit merge ${sourceBranch}`;
+                    break;
+
+                case 'remote':
+                    const remoteAction = document.getElementById('remoteAction').value;
+                    const remoteBranch = document.getElementById('remoteBranch').value;
+                    const setUpstream = document.getElementById('setUpstream').checked;
+
+                    if (!remoteBranch) {
+                        alert('Veuillez entrer un nom de branche');
+                        return;
+                    }
+
+                    switch(remoteAction) {
+                        case 'push':
+                            command = setUpstream
+                                ? `git push -u origin ${remoteBranch}`
+                                : `git push origin ${remoteBranch}`;
+                            break;
+                        case 'pull':
+                            command = `git pull origin ${remoteBranch}`;
+                            break;
+                        case 'fetch':
+                            command = `git fetch origin ${remoteBranch}`;
+                            break;
+                    }
+                    break;
+
+                case 'undo':
+                    const undoAction = document.getElementById('undoAction').value;
+                    const undoFile = document.getElementById('undoFile').value;
+
+                    switch(undoAction) {
+                        case 'unstage':
+                            command = undoFile ? `git reset ${undoFile}` : 'git reset';
+                            break;
+                        case 'uncommit':
+                            command = 'git reset --soft HEAD~1';
+                            break;
+                        case 'discard':
+                            command = undoFile ? `git restore ${undoFile}` : 'git restore .';
+                            break;
+                        case 'hard-reset':
+                            command = 'git reset --hard HEAD\n⚠️ ATTENTION: Cette commande supprime toutes les modifications non commitées !';
+                            break;
+                    }
+                    break;
+
+                case 'stash':
+                    const stashAction = document.getElementById('stashAction').value;
+                    const stashMessage = document.getElementById('stashMessage').value;
+
+                    switch(stashAction) {
+                        case 'save':
+                            command = stashMessage
+                                ? `git stash save "${stashMessage}"`
+                                : 'git stash';
+                            break;
+                        case 'pop':
+                            command = 'git stash pop';
+                            break;
+                        case 'list':
+                            command = 'git stash list';
+                            break;
+                        case 'apply':
+                            command = 'git stash apply';
+                            break;
+                    }
+                    break;
+            }
+
+            resultBox.textContent = command;
+            resultBox.classList.add('show');
+        }
+
+        // Copy command to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Commande copiée dans le presse-papier !');
+            });
+        }
+    </script>
+</body>
+</html>
